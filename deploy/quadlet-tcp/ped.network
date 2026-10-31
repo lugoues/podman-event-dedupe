@@ -1,0 +1,5 @@
+# Internal network: no route to the outside, no published ports.
+# Any container attached to it can reach the proxy.
+[Network]
+NetworkName=ped
+Internal=true

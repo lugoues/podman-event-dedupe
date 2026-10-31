@@ -1,0 +1,3 @@
+# Network shared by Traefik and the containers it routes to.
+[Network]
+NetworkName=web

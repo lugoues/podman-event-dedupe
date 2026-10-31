@@ -1,0 +1,39 @@
+{
+  "name": "Debian",
+  "image": "mcr.microsoft.com/devcontainers/base:trixie",
+  "features": {},
+  "mounts": [
+    "source=/etc/localtime,target=/usr/share/zoneinfo/hostlocaltime,type=bind,readonly",
+    {
+      "source": "mise-data-volume",
+      "target": "/mnt/mise-data",
+      "type": "volume"
+    }
+  ],
+  "remoteEnv": {
+    "MISE_TRUSTED_CONFIG_PATHS": "${env:MISE_TRUSTED_CONFIG_PATHS}:${containerWorkspaceFolder}/.mise"
+  },
+  "containerEnv": {
+    "MISE_DATA_DIR": "/mnt/mise-data",
+    "MISE_TRUSTED_CONFIG_PATHS": "${env:MISE_TRUSTED_CONFIG_PATHS}:${workspaceFolder}/.mise"
+  },
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway",
+    //  To work with rootless podman you will need
+    // to set the sollowing in your environment.
+    // export DEVCONTAINER_USERNS_ARG=--userns=keep-id:uid=$(id -u)
+    "${localEnv:DEVCONTAINER_USERNS_ARG}"
+  ],
+    "privileged": true,
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vadimmelnicuk.meo",
+        "golang.go",
+        "cuelangorg.vscode-cue",
+        "hverlin.mise-vscode",
+        "tombi-toml.tombi"
+      ]
+    }
+  }
+}

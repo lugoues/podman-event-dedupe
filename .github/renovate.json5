@@ -1,0 +1,26 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    "docker:pinDigests",
+    "schedule:weekly",
+  ],
+  minimumReleaseAge: "7 days",
+  // Refreshes mise.lock, which is the only place tools set to "latest" are pinned.
+  lockFileMaintenance: { enabled: true },
+  postUpdateOptions: ["gomodTidy"],
+  packageRules: [
+    { matchManagers: ["github-actions"], groupName: "github actions" },
+    { matchManagers: ["mise"], groupName: "mise tools" },
+    {
+      matchDatasources: ["docker"],
+      groupName: "container images",
+      // gcr.io reports no release timestamps; without this, distroless updates never land.
+      minimumReleaseAgeBehaviour: "timestamp-optional",
+    },
+    // Example units track floating tags on purpose; the proxy image is built locally.
+    { matchFileNames: ["deploy/**"], pinDigests: false },
+    { matchPackageNames: ["localhost/**"], enabled: false },
+  ],
+}

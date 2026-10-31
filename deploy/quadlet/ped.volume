@@ -1,0 +1,3 @@
+# Shared volume holding the proxy socket. Traefik mounts it too.
+[Volume]
+VolumeName=ped

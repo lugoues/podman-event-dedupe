@@ -1,0 +1,21 @@
+# Snippet: only the parts relevant to the proxy are shown.
+[Unit]
+Requires=podman-event-dedupe.service
+After=podman-event-dedupe.service
+
+[Container]
+Image=docker.io/library/traefik:v3
+ContainerName=traefik
+Volume=ped.volume:/run/ped
+Network=web.network
+Exec=--providers.docker.endpoint=unix:///run/ped/docker.sock \
+     --providers.docker.exposedbydefault=false \
+     --providers.docker.network=web \
+     --entrypoints.web.address=:80
+PublishPort=8080:80
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

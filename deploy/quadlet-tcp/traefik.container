@@ -1,0 +1,22 @@
+# Snippet: Traefik joins the internal network to reach the proxy, plus the
+# web network for its backends.
+[Unit]
+Requires=podman-event-dedupe.service
+After=podman-event-dedupe.service
+
+[Container]
+Image=docker.io/library/traefik:v3
+ContainerName=traefik
+Network=ped.network
+Network=web.network
+Exec=--providers.docker.endpoint=tcp://podman-event-dedupe:2375 \
+     --providers.docker.exposedbydefault=false \
+     --providers.docker.network=web \
+     --entrypoints.web.address=:80
+PublishPort=8080:80
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

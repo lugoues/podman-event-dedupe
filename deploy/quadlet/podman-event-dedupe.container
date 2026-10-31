@@ -1,0 +1,24 @@
+[Unit]
+Description=Podman event dedupe proxy for Traefik
+Requires=podman.socket
+After=podman.socket
+
+[Container]
+Image=localhost/podman-event-dedupe:latest
+ContainerName=podman-event-dedupe
+# Rootless: %t/podman/podman.sock. Rootful: /run/podman/podman.sock.
+Volume=%t/podman/podman.sock:/run/podman/podman.sock
+Volume=ped.volume:/run/ped
+# Root inside the container maps to your user in rootless mode, which owns the Podman socket.
+User=0
+# SELinux blocks container_t from connecting to the Podman socket. See README.
+SecurityLabelDisable=true
+Network=none
+Environment=PED_LISTEN=unix:///run/ped/docker.sock
+Environment=PED_UPSTREAM=unix:///run/podman/podman.sock
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

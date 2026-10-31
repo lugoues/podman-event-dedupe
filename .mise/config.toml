@@ -1,0 +1,44 @@
+[tools]
+"aqua:cli/cli" = "latest"
+"aqua:koalaman/shellcheck" = "0.11.0"
+"aqua:rhysd/actionlint" = "latest"
+"aqua:tombi-toml/tombi" = "1.8.4"
+"aqua:zizmorcore/zizmor" = "latest"
+aube = "latest"
+cue = "0.17.1"
+go = "latest"
+golangci-lint = "2.14.0"
+
+[settings]
+activate_aggressive = true
+aqua.minisign = true
+aqua.slsa = true
+auto_install = true
+disable_backends = ["asdf", "gen", "dotnet", "spm", "ubi", "bun"]
+exec_auto_install = true
+experimental = true
+idiomatic_version_file_enable_tools = []
+jobs = 8
+lockfile = true
+not_found_auto_install = true
+npm = { package_manager = "aube" }
+task.output = "keep-order"
+use_versions_host = true
+
+[tasks.lint]
+description = "Lint Go, shell scripts and GitHub workflows"
+run = [
+  "golangci-lint run",
+  "shellcheck test/e2e/e2e.sh",
+  "actionlint",
+  "zizmor .github/workflows",
+]
+
+[tasks.test]
+description = "Run unit and integration tests"
+run = "go test -race ./..."
+
+[tasks.build]
+description = "Build a static binary into dist/"
+env = { CGO_ENABLED = "0" }
+run = "go build -trimpath -ldflags='-s -w -X main.version={{env.VERSION | default(value=\"dev\")}}' -o dist/podman-event-dedupe ./cmd/podman-event-dedupe"

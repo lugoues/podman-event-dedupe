@@ -1,0 +1,20 @@
+[Unit]
+Description=Podman event dedupe proxy for Traefik (TCP)
+Requires=podman.socket
+After=podman.socket
+
+[Container]
+Image=localhost/podman-event-dedupe:latest
+ContainerName=podman-event-dedupe
+Volume=%t/podman/podman.sock:/run/podman/podman.sock
+User=0
+SecurityLabelDisable=true
+Network=ped.network
+Environment=PED_LISTEN=tcp://0.0.0.0:2375
+Environment=PED_UPSTREAM=unix:///run/podman/podman.sock
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
